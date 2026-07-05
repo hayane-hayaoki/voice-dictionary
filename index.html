@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>声紋図鑑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@500;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&family=Zen+Kaku+Gothic+Antique:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#12131A;--plate:#1A1C25;--plate-2:#20222D;
+    --line:rgba(232,228,218,.10);--line-strong:rgba(232,228,218,.18);
+    --fg:#ECE8DE;--fg-dim:#A6A296;--fg-faint:#726F66;
+    --blend:#F0E4BE;
+    --serif:"Shippori Mincho","Hiragino Mincho ProN","Yu Mincho",serif;
+    --gothic:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",sans-serif;
+    --antique:"Zen Kaku Gothic Antique","Hiragino Sans",sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;font-size:17.5px;}
+  body{margin:0;background:radial-gradient(120% 80% at 50% -10%,#1c1e29 0%,var(--ink) 60%) fixed,var(--ink);
+    color:var(--fg);font-family:var(--gothic);line-height:1.7;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px 96px;}
+  [hidden]{display:none !important;}
+
+  /* top nav */
+  .topnav{display:flex;justify-content:center;padding:26px 0 0;}
+  .seg{display:inline-flex;background:var(--plate);border:1px solid var(--line-strong);border-radius:999px;padding:4px;gap:2px;}
+  .seg button{font-family:var(--antique);letter-spacing:.12em;font-size:.8rem;color:var(--fg-dim);background:none;border:none;
+    padding:10px 24px;border-radius:999px;cursor:pointer;transition:color .2s,background .25s;}
+  .seg button.active{color:var(--ink);background:linear-gradient(180deg,#ECE8DE,#cfcabb);font-weight:700;}
+  .seg button:focus-visible{outline:2px solid #82C0E0;outline-offset:2px;}
+
+  header{padding:40px 0 8px;text-align:center;}
+  .eyebrow{font-family:var(--antique);letter-spacing:.4em;font-size:.66rem;color:var(--fg-faint);
+    text-transform:uppercase;margin:0 0 16px;padding-left:.4em;}
+  h1{font-family:var(--serif);font-weight:800;font-size:clamp(2.1rem,5.5vw,3.3rem);letter-spacing:.1em;margin:0;line-height:1.1;}
+  .lede{max-width:600px;margin:22px auto 0;color:var(--fg-dim);font-size:.94rem;}
+
+  /* intro (centered) */
+  .intro{max-width:760px;margin:28px auto 0;background:linear-gradient(180deg,var(--plate),var(--plate-2));
+    border:1px solid var(--line);border-radius:18px;padding:24px 28px 20px;text-align:center;}
+  .intro-lead{color:var(--fg);font-size:.98rem;margin:0 0 4px;line-height:1.6;}
+  .intro-lead b{font-weight:700;}
+  .defs{max-width:560px;margin:0 auto;text-align:left;}
+  .def{padding:10px 0;border-top:1px solid var(--line);}
+  .def:first-child{border-top:none;}
+  .def-head{display:grid;grid-template-columns:1.9em 3em 1fr;align-items:baseline;gap:8px;margin-bottom:3px;}
+  .num{font-family:var(--serif);font-weight:700;font-size:1.05rem;color:var(--fg-dim);}
+  .dname{font-family:var(--serif);font-weight:700;font-size:1.16rem;color:var(--fg);letter-spacing:.04em;}
+  .dpoles{font-family:var(--antique);font-size:.78rem;color:var(--fg-faint);letter-spacing:.04em;}
+  .def-body{font-size:.87rem;color:var(--fg-dim);line-height:1.58;padding-left:calc(1.9em + 8px);}
+  .intro-foot{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);color:var(--fg-dim);font-size:.9rem;line-height:1.62;}
+  .intro-foot b{color:var(--fg);font-weight:700;}
+
+  /* axis sections */
+  .axis{margin-top:54px;}
+  .axis-head{display:flex;align-items:center;gap:20px;margin-bottom:20px;flex-wrap:wrap;}
+  .axis-mark{font-family:var(--serif);font-weight:800;font-size:1.8rem;letter-spacing:.14em;color:var(--fg);flex:none;}
+  .axis-desc{color:var(--fg-dim);font-size:.9rem;line-height:1.7;flex:1 1 320px;margin:0;}
+  .axis-desc b{color:var(--fg);font-weight:600;}
+
+  .ov-card{background:radial-gradient(130% 100% at 12% 0%,rgba(255,255,255,.03),transparent 55%),
+    linear-gradient(180deg,var(--plate),var(--plate-2));border:1px solid var(--line);border-radius:20px;
+    padding:24px 28px;display:grid;grid-template-columns:minmax(0,480px) 1fr;gap:32px;align-items:center;}
+  .ov-legend{display:flex;flex-direction:column;gap:24px;min-width:0;}
+  .ov-pole{--pig:#888;}
+  .vocab{display:flex;flex-wrap:wrap;gap:7px;align-items:center;}
+  .vocab span{font-size:.75rem;color:var(--fg);font-family:var(--antique);padding:3px 10px;border-radius:999px;
+    background:color-mix(in srgb,var(--pig) 13%,transparent);border:1px solid color-mix(in srgb,var(--pig) 30%,transparent);}
+  .vocab .lead{font-family:var(--serif);font-weight:700;font-size:1.35rem;letter-spacing:.04em;line-height:1;
+    color:var(--ink);background:var(--pig);border-color:var(--pig);padding:5px 15px;}
+
+  .radar-wrap{display:grid;place-items:center;}
+  svg.radar{width:100%;height:auto;max-width:470px;overflow:visible;}
+  svg.radar text{font-family:var(--antique);}
+  .grid-poly{fill:none;stroke:var(--line);}
+  .grid-poly.r100{stroke:var(--line-strong);}
+  .spoke{stroke:var(--line);}
+  .v-name{fill:var(--fg);font-size:13px;font-weight:700;letter-spacing:.02em;}
+  .v-ph{font-size:11px;font-weight:500;}
+  .val-poly{stroke-width:2;stroke-linejoin:round;}
+  .val-dot{stroke:var(--ink);stroke-width:1.2;}
+
+  footer{margin-top:64px;color:var(--fg-faint);font-size:.78rem;letter-spacing:.02em;line-height:1.85;
+    max-width:780px;margin-left:auto;margin-right:auto;text-align:center;}
+  footer .rule{width:40px;height:1px;background:var(--line-strong);margin:0 auto 22px;}
+  footer .sig{margin-top:16px;font-family:var(--antique);letter-spacing:.16em;font-size:.72rem;color:var(--fg-faint);}
+
+  /* ===== blender ===== */
+  .panel{background:linear-gradient(180deg,var(--plate),var(--plate-2));border:1px solid var(--line);border-radius:18px;}
+  .palette{padding:22px 24px;margin-top:8px;}
+  .palette h3,.stage h3{font-family:var(--antique);letter-spacing:.2em;font-size:.7rem;color:var(--fg-faint);text-transform:uppercase;margin:0 0 14px;}
+  .keypad{display:flex;flex-wrap:wrap;gap:8px;}
+  .keycell{position:relative;}
+  .key{--pig:#888;width:52px;height:52px;border-radius:12px;border:1px solid color-mix(in srgb,var(--pig) 48%,var(--line));
+    background:transparent;color:var(--pig);font-family:var(--serif);font-weight:700;font-size:1.5rem;cursor:pointer;
+    transition:all .16s;display:grid;place-items:center;}
+  .key:hover{background:color-mix(in srgb,var(--pig) 16%,transparent);}
+  .key.open{background:color-mix(in srgb,var(--pig) 22%,transparent);border-color:var(--pig);}
+  .key.has{background:var(--pig);color:var(--ink);border-color:var(--pig);box-shadow:0 0 12px color-mix(in srgb,var(--pig) 52%,transparent);}
+  .key:focus-visible{outline:2px solid var(--pig);outline-offset:2px;}
+  .key.clearkey{width:auto;padding:0 16px;font-family:var(--antique);font-weight:500;font-size:.78rem;letter-spacing:.12em;
+    color:var(--fg-faint);border-color:var(--line-strong);}
+  .key.clearkey:hover{background:rgba(255,255,255,.05);color:var(--fg-dim);}
+  .drop{--pig:#888;position:absolute;top:calc(100% + 7px);left:0;z-index:30;min-width:150px;max-height:290px;overflow:auto;
+    background:#1f2029;border:1px solid color-mix(in srgb,var(--pig) 45%,var(--line-strong));border-radius:12px;
+    box-shadow:0 12px 34px rgba(0,0,0,.5);padding:6px;display:flex;flex-direction:column;gap:2px;}
+  .drop .dw{text-align:left;background:none;border:none;cursor:pointer;color:var(--fg);font-size:.85rem;font-family:var(--gothic);
+    padding:8px 12px;border-radius:8px;transition:background .13s;}
+  .drop .dw:hover{background:color-mix(in srgb,var(--pig) 24%,transparent);}
+  .drop .dw.picked{color:var(--pig);font-weight:700;}
+  .drop .dw.picked::before{content:"✓ ";}
+  .presets{margin-top:20px;display:flex;flex-wrap:wrap;gap:9px;align-items:center;}
+  .presets .lbl{font-size:.74rem;color:var(--fg-faint);font-family:var(--antique);letter-spacing:.1em;margin-right:2px;}
+  .pbtn{font-family:var(--gothic);font-size:.8rem;color:var(--fg);cursor:pointer;padding:7px 15px;border-radius:999px;
+    border:1px solid var(--line-strong);background:rgba(255,255,255,.03);transition:all .18s;}
+  .pbtn:hover{background:rgba(255,255,255,.07);}
+  .pbtn.clear{color:var(--fg-faint);}
+  .stage{margin-top:18px;padding:26px 28px;display:grid;grid-template-columns:minmax(0,440px) 1fr;gap:32px;align-items:center;}
+  .sel{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:22px;}
+  .sel-item{--pig:#888;display:inline-flex;align-items:center;gap:8px;padding:6px 8px 6px 11px;border-radius:999px;
+    border:1px solid color-mix(in srgb,var(--pig) 40%,var(--line));background:color-mix(in srgb,var(--pig) 13%,transparent);font-size:.84rem;color:var(--fg);}
+  .sel-item .dot{width:11px;height:11px;border-radius:3px;background:var(--pig);box-shadow:0 0 0 1px rgba(255,255,255,.14) inset;}
+  .sel-item .rm{cursor:pointer;color:var(--fg-faint);border:none;background:none;font-size:1.05rem;line-height:1;padding:0 2px;transition:color .15s;}
+  .sel-item .rm:hover{color:var(--fg);}
+  .empty{color:var(--fg-faint);font-size:.86rem;padding:4px 0 18px;}
+  .comment{font-size:.95rem;line-height:1.85;background:rgba(240,228,190,.06);border-left:2px solid var(--blend);
+    border-radius:0 10px 10px 0;padding:15px 17px;}
+  .comment .hd{font-family:var(--antique);letter-spacing:.14em;font-size:.64rem;color:var(--fg-faint);display:block;margin-bottom:7px;}
+  .comment .txt{font-family:var(--serif);font-weight:600;font-size:1.12rem;color:var(--blend);line-height:1.7;}
+
+  @media (max-width:820px){
+    .ov-card,.stage{grid-template-columns:1fr;gap:22px;}
+    .radar-wrap{order:-1;}
+  }
+  @media (prefers-reduced-motion:reduce){.val-poly,.val-dot{transition:none!important;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <nav class="topnav">
+    <div class="seg" role="tablist">
+      <button id="nav-atlas" class="active" role="tab">声紋図鑑</button>
+      <button id="nav-blend" role="tab">感情の足し算</button>
+    </div>
+  </nav>
+
+  <!-- ============ 声紋図鑑 ============ -->
+  <div id="view-atlas">
+    <header>
+      <p class="eyebrow">歌唱表現の物理現象カタログ</p>
+      <h1>声紋図鑑</h1>
+
+      <div class="intro">
+        <p class="intro-lead"><b>声には、感情がそのまま物理現象として現れます。</b><br>ここでは歌声の要素を5種類に分けて考えていきます。</p>
+
+        <div class="defs">
+          <div class="def"><div class="def-head"><span class="num">①</span><span class="dname">響き</span><span class="dpoles">明るい ⟷ 暗い</span></div>
+            <div class="def-body">声の色合いやトーンのこと。同じ高さや同じ母音でも音色が変わります。歌詞の内容などと密接に関わってきます。</div></div>
+          <div class="def"><div class="def-head"><span class="num">②</span><span class="dname">圧</span><span class="dpoles">迫る ⟷ 引く</span></div>
+            <div class="def-body">声の勢いや迫力のこと。押し出して迫っていくか、引いて落ち着いていくか。声のボリュームとは別なので要注意。</div></div>
+          <div class="def"><div class="def-head"><span class="num">③</span><span class="dname">息</span><span class="dpoles">集中 ⟷ 拡散</span></div>
+            <div class="def-body">声に息をまぜるかどうか。すっきり澄んでいるか、息が混じってかすれているかの違い。息の量そのものではない。</div></div>
+          <div class="def"><div class="def-head"><span class="num">④</span><span class="dname">音程</span><span class="dpoles">くっきり ⟷ なめらか</span></div>
+            <div class="def-body">メロディの動き方。くっきり際立って動くか、なめらかにつないで動くか。レガートの質にも通じる重要ポイント。</div></div>
+          <div class="def"><div class="def-head"><span class="num">⑤</span><span class="dname">言葉</span><span class="dpoles">硬い ⟷ 柔らかい</span></div>
+            <div class="def-body">子音を含めた発音の違い。硬くハッキリ刻むか、柔らかく丸くつなげるか。同じ歌詞でも使い分けで印象が変わる。</div></div>
+        </div>
+
+        <p class="intro-foot"><b>——これらはあくまで傾向です。</b>曲調や声質によって色々と細かく変わっていきます。まずは5つの要素を使いこなせるように練習をして、表現の幅を少しずつ増やしていきましょう。</p>
+      </div>
+    </header>
+
+    <main id="atlas-sections"></main>
+
+    <footer>
+      <div class="rule"></div>
+      ここに示したのは、声質の大まかな傾向です。絶対的な正解ではありません。同じ感情でも、曲や声種や表現の意図によって声紋の形は変わります。値はその人の歌声を基準にした「変化の向き」（相対値）なので、声種が違うソプラノもアルトもテノールもバスも、同じ感覚で使い分けが可能です。
+      <div class="sig">府中西高校合唱部 ・ 発声表現リファレンス</div>
+    </footer>
+  </div>
+
+  <!-- ============ 感情の足し算 ============ -->
+  <div id="view-blend" hidden>
+    <header>
+      <p class="eyebrow">声紋図鑑 ・ 実践編</p>
+      <h1>感情の足し算</h1>
+      <p class="lede">一言では表せない複雑な感情がたくさんあります。これは、いくつかの感情が同時に鳴っている状態といって良いはずです。各カテゴリーから適切な感情を選択すると、それらの平均から生まれる声紋が表示されます。</p>
+    </header>
+
+    <div class="panel palette">
+      <h3>感情を選ぶ（漢字を押すと言葉が出ます）</h3>
+      <div class="keypad" id="keypad"></div>
+      <div class="presets">
+        <span class="lbl">例：</span>
+        <button class="pbtn" data-preset="free">自由</button>
+        <button class="pbtn" data-preset="heartbreak">失恋</button>
+        <button class="pbtn" data-preset="kando">感動</button>
+        <button class="pbtn" data-preset="peace">平和</button>
+        <button class="pbtn" data-preset="nature">大自然</button>
+        <button class="pbtn" data-preset="grad">卒業式</button>
+      </div>
+    </div>
+
+    <div class="panel stage">
+      <div class="radar-wrap" id="blendRadar"></div>
+      <div>
+        <h3>選択した感情</h3>
+        <div class="sel" id="sel"></div>
+        <div class="comment" id="comment"></div>
+      </div>
+    </div>
+
+    <footer>
+      <div class="rule"></div>
+      選んだ感情の声紋を平均してできた金色の声紋が、その複雑な感情の「声の形」です。ですが、これはあくまでも出発点にすぎません。曲や場面に応じて、ここから微調整していきましょう。
+    </footer>
+  </div>
+
+</div>
+
+<script>
+/* ===== shared data ===== */
+const PARAM=["響き","圧","息","音程の動き","言葉"];
+const VORDER=[0,1,4,3,2]; /* 上=響き 右上=圧 右下=言葉 左下=音程 左上=息 */
+
+const EMO=[
+  {key:"陽",pig:"#E3B23C",vals:[95,55,90,82,48],ph:["開いて明るく輝く","軽やかに前へ弾む","すっきり澄んで鳴る","弾んで上へ跳ねる","軽やかに弾ませる"],
+   vocab:["楽しい","嬉しい","喜び","幸せ","ワクワク","爽快","晴れやか","朗らか","無邪気","はしゃぐ","弾む","解放感","高揚感","歓喜"]},
+  {key:"陰",pig:"#5B7DB1",vals:[18,25,30,22,38],ph:["沈んで暗い声色","引いて落ち着く","息が混じる","下へなめらかに沈む","ほどけて途切れる"],
+   vocab:["悲しい","寂しい","切ない","孤独","後悔","憂鬱","嘆き","心残り","はかない","哀愁","悲哀","虚無感","喪失感","絶望","落胆"]},
+  {key:"剛",pig:"#CE3B2C",vals:[80,98,65,88,98],ph:["鋭く張った明るさ","強く前へ迫る","息を詰めて押す","刻んでくっきり動く","硬く立てて叩きつける"],
+   vocab:["怒り","悔しさ","憎しみ","苛立ち","激しさ","攻撃的","反発","憤り","抗議","激情","力強さ","猛烈","圧倒的","反骨心","拒絶","威圧"]},
+  {key:"柔",pig:"#E7A6C4",vals:[35,22,48,15,18],ph:["丸く温かい","引いてそっと包む","息をまとって柔らかい","なめらかに運ぶ","柔らかく丸く溶かす"],
+   vocab:["愛","優しさ","感謝","安らぎ","温もり","思いやり","穏やか","いたわり","包容力","親愛","慈しみ","慰め","許し","寄り添い","寛容"]},
+  {key:"動",pig:"#EE8A4E",vals:[88,90,85,95,42],ph:["前へ抜けて輝く","強く押して迫る","よく鳴らして飛ばす","大きく上へ駆け上がる","母音で歌い上げる"],
+   vocab:["希望","勇気","ときめき","恋","情熱","期待","前向き","決意","挑戦","堂々","憧れ","活力","誇り","確信","躍動","衝動","熱狂"]},
+  {key:"静",pig:"#A99BD6",vals:[40,32,30,35,42],ph:["こもってはっきりしない","引いて定まらない","息が混じってためらう","たどたどしく揺れる","言いよどむ"],
+   vocab:["迷い","戸惑い","ためらい","照れ","遠慮","慎重","立ち止まる","尻込み","気後れ","躊躇","葛藤","思案","内省的","静寂","郷愁"]},
+  {key:"緊",pig:"#52B0A8",vals:[62,72,35,92,80],ph:["薄く張り詰める","こわばって前へ張る","震えて息が漏れる","細かくくっきり震える","硬く立って強張る"],
+   vocab:["不安","恐れ","苦しみ","緊張","怯え","あせり","驚き","動揺","胸騒ぎ","警戒","切迫感","息苦しさ","張り詰め","焦燥","戦慄"]},
+  {key:"緩",pig:"#9AA0A6",vals:[15,10,22,10,15],ph:["くすんで生気がない","力が抜けて引ききる","息が漏れ出る","抑揚なく平坦に沈む","柔らかく崩れる"],
+   vocab:["ゆったり","くつろぎ","淡々","脱力","あきらめ","むなしさ","気だるさ","無気力","無力感","無関心","うつろ","放心","達観","諦観"]},
+  {key:"天",pig:"#82C0E0",vals:[80,45,85,22,25],ph:["澄んで清らかに輝く","力まず中庸に立つ","混じり気なくまっすぐ鳴る","浮かぶように伸びる","母音に柔らかく溶かす"],
+   vocab:["神聖","慈悲","敬い","祈り","清らかさ","透明感","無垢","幻想的","神秘","浄化","賛美","称賛","崇高","超越","永遠","畏敬"]},
+  {key:"地",pig:"#C08A55",vals:[52,52,42,75,88],ph:["話し声に近い自然な色","軽く前へ出る","人間くさくリアル","話し言葉的に軽く跳ねる","はっきり硬く語る"],
+   vocab:["親しみ","ユーモア","おおらか","語り","つぶやき","いたずら","滑稽","皮肉","生活感","俗っぽい","泥くささ","素朴","世俗的"]},
+];
+const byKey=Object.fromEntries(EMO.map(e=>[e.key,e]));
+
+const AXES=[
+  {axis:"陽陰",poles:["陽","陰"],desc:"心が晴れて外へ開く<b>陽</b>と、沈んで内へ閉じる<b>陰</b>。明るさと暗さ、嬉しさと悲しさ——歌のいちばん土台になる、気分の明暗の対比です。"},
+  {axis:"剛柔",poles:["剛","柔"],desc:"外へ強くぶつける<b>剛</b>と、相手をそっと包み込む<b>柔</b>。怒りと愛など、声の圧力の変化により正反対になるような、攻めと受けの対比です。"},
+  {axis:"動静",poles:["動","静"],desc:"立派に前へ踏み出す<b>動</b>と、迷って足が止まる<b>静</b>。意志が声を前に運ぶのか、内でためらってしまうのか。躍動感と落ち着きの対比です。"},
+  {axis:"緊緩",poles:["緊","緩"],desc:"全身が張り詰める<b>緊</b>と、力がすっと抜けきる<b>緩</b>。恐れの緊張と、あきらめの脱力。体のこわばり方が逆になる、張りと弛みの対比です。"},
+  {axis:"天地",poles:["天","地"],desc:"澄み渡って昇っていくような<b>天</b>と、現実を見据えた<b>地</b>。神秘的な表現にするか、人間っぽい表現にするのか。非日常と日常の対比です。"},
+];
+
+/* ===== radar geometry ===== */
+const TAU=Math.PI*2,CX=220,CY=196,R=92,GAP=16,LH=15;
+function pt(cx,cy,r,i,n){const a=-Math.PI/2+i*TAU/n;return[cx+r*Math.cos(a),cy+r*Math.sin(a)];}
+function polyPoints(vals){const p=[];for(let i=0;i<5;i++){const d=VORDER[i];const[x,y]=pt(CX,CY,R*vals[d]/100,i,5);p.push([x,y]);}return p;}
+function gridSVG(){
+  let g="";
+  [20,40,60,80,100].forEach(v=>{const pts=[];for(let i=0;i<5;i++){const[x,y]=pt(CX,CY,R*v/100,i,5);pts.push(x.toFixed(1)+","+y.toFixed(1));}g+=`<polygon class="grid-poly ${v===100?'r100':''}" points="${pts.join(' ')}"/>`;});
+  for(let i=0;i<5;i++){const[x,y]=pt(CX,CY,R,i,5);g+=`<line class="spoke" x1="${CX}" y1="${CY}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`;}
+  return g;
+}
+
+/* ---- atlas radar (two poles with phrases) ---- */
+function radarPair(a,b){
+  const series=[{vals:a.vals,color:a.pig,ph:a.ph},{vals:b.vals,color:b.pig,ph:b.ph}];
+  let g=gridSVG();
+  series.forEach(s=>{
+    const pts=polyPoints(s.vals);const poly=pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(' ');
+    g+=`<polygon class="val-poly" points="${poly}" style="fill:${s.color};fill-opacity:.2;stroke:${s.color};filter:drop-shadow(0 0 6px ${s.color}55)"/>`;
+    pts.forEach(p=>{g+=`<circle class="val-dot" cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3.1" style="fill:${s.color}"/>`;});
+  });
+  for(let i=0;i<5;i++){const d=VORDER[i];const[vx,vy]=pt(CX,CY,R+GAP,i,5);
+    let anchor="middle";if(vx>CX+3)anchor="start";else if(vx<CX-3)anchor="end";
+    const nLines=3;let y0;
+    if(i===0)y0=vy-(nLines-1)*LH;else if(i===2||i===3)y0=vy+6;else y0=vy-((nLines-1)*LH)/2;
+    let t=`<text text-anchor="${anchor}" x="${vx.toFixed(1)}" y="${y0.toFixed(1)}"><tspan class="v-name" x="${vx.toFixed(1)}">【${PARAM[d]}】</tspan>`;
+    series.forEach(s=>{t+=`<tspan class="v-ph" x="${vx.toFixed(1)}" dy="${LH}" style="fill:${s.color}">${s.ph[d]}</tspan>`;});
+    t+=`</text>`;g+=t;}
+  return `<svg class="radar" viewBox="0 0 440 400" role="img">${g}</svg>`;
+}
+
+function poleLegend(p){
+  return `<div class="ov-pole" style="--pig:${p.pig}"><div class="vocab"><span class="lead">${p.key}</span>${p.vocab.map(w=>`<span>${w}</span>`).join('')}</div></div>`;
+}
+
+function renderAtlas(){
+  document.getElementById('atlas-sections').innerHTML=AXES.map(ax=>{
+    const a=byKey[ax.poles[0]],b=byKey[ax.poles[1]];
+    return `<section class="axis">
+      <div class="axis-head"><span class="axis-mark">${ax.axis}</span><p class="axis-desc">${ax.desc}</p></div>
+      <div class="ov-card"><div class="radar-wrap">${radarPair(a,b)}</div><div class="ov-legend">${poleLegend(a)}${poleLegend(b)}</div></div>
+    </section>`;
+  }).join('');
+}
+
+/* ===== blender ===== */
+const PRESETS={
+  free:[["解放感","陽"],["躍動","動"],["ゆったり","緩"]],
+  heartbreak:[["寂しい","陰"],["愛","柔"],["むなしさ","緩"]],
+  kando:[["歓喜","陽"],["躍動","動"],["胸騒ぎ","緊"]],
+  peace:[["安らぎ","柔"],["ゆったり","緩"],["清らかさ","天"]],
+  nature:[["永遠","天"],["圧倒的","剛"],["解放感","陽"]],
+  grad:[["寂しい","陰"],["希望","動"],["祈り","天"]],
+};
+let selected=[],openKey=null;
+
+function computeBlend(items){if(!items.length)return null;const o=[0,0,0,0,0];items.forEach(s=>{const v=byKey[s.k].vals;for(let i=0;i<5;i++)o[i]+=v[i];});return o.map(x=>x/items.length);}
+
+function radarBlend(items,blend){
+  let g=gridSVG();
+  const shown=[...new Set(items.map(s=>s.k))];
+  shown.forEach(k=>{const e=byKey[k];const poly=polyPoints(e.vals).map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(' ');
+    g+=`<polygon points="${poly}" style="fill:${e.pig};fill-opacity:.09;stroke:${e.pig};stroke-opacity:.6;stroke-width:1.4;stroke-linejoin:round"/>`;});
+  if(blend){const pts=polyPoints(blend);const poly=pts.map(p=>p[0].toFixed(1)+","+p[1].toFixed(1)).join(' ');
+    g+=`<polygon points="${poly}" style="fill:var(--blend);fill-opacity:.24;stroke:var(--blend);stroke-width:3.4;stroke-linejoin:round;filter:drop-shadow(0 0 11px rgba(240,228,190,.75))"/>`;
+    pts.forEach(p=>{g+=`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4.2" style="fill:var(--blend);stroke:var(--ink);stroke-width:1.4"/>`;});}
+  for(let i=0;i<5;i++){const d=VORDER[i];const[vx,vy]=pt(CX,CY,R+GAP,i,5);
+    let anchor="middle";if(vx>CX+3)anchor="start";else if(vx<CX-3)anchor="end";
+    let y0;if(i===0)y0=vy-2;else if(i===2||i===3)y0=vy+12;else y0=vy+4;
+    g+=`<text text-anchor="${anchor}" x="${vx.toFixed(1)}" y="${y0.toFixed(1)}"><tspan class="v-name" x="${vx.toFixed(1)}">【${PARAM[d]}】</tspan></text>`;}
+  return `<svg class="radar" viewBox="0 0 440 400" role="img">${g}</svg>`;
+}
+
+function commentText(items,b){
+  const poles=[...new Set(items.map(s=>s.k))].sort().join('');
+  const CUR={
+    [["陽","動","緩"].sort().join('')]:"軽やかに弾みながら、どこまでも解き放たれた声。",
+    [["陰","柔","緩"].sort().join('')]:"愛の余韻を抱えたまま、力なく沈んでいく声。",
+    [["陽","動","緊"].sort().join('')]:"胸が高鳴り、こみ上げてくる——ふるえる歓びの声。",
+    [["柔","緩","天"].sort().join('')]:"穏やかにほどけて、澄みわたっていく——安らかな声。",
+    [["天","剛","陽"].sort().join('')]:"明るく雄大に、圧倒的に広がっていく声。",
+    [["陰","動","天"].sort().join('')]:"凛として、あたたかく、少し切ない——旅立ちの声。",
+  };
+  if(CUR[poles]) return CUR[poles];
+  const seg=[];
+  if(b[0]>=60)seg.push("明るく開いた");else if(b[0]<=40)seg.push("暗く沈んだ");
+  if(b[1]>=60)seg.push("前へ迫る");else if(b[1]<=40)seg.push("引いて落ち着いた");
+  if(b[2]>=62)seg.push("澄んだ");else if(b[2]<=38)seg.push("息のまじる");
+  if(b[3]>=60)seg.push("くっきり動く");else if(b[3]<=40)seg.push("なめらかな");
+  if(b[4]>=60)seg.push("子音の立った");else if(b[4]<=38)seg.push("言葉のやわらかい");
+  if(!seg.length) return "どこにも偏らない、ニュートラルな声。";
+  return seg.join("、")+"声。";
+}
+
+function pickWord(w,k){const i=selected.findIndex(s=>s.w===w&&s.k===k);if(i>=0)selected.splice(i,1);else selected.push({w,k});openKey=null;renderBlend();}
+function removeAt(i){selected.splice(i,1);renderBlend();}
+
+function renderBlend(){
+  document.getElementById('keypad').innerHTML=EMO.map(e=>{
+    const has=selected.some(s=>s.k===e.key),op=openKey===e.key;
+    const drop=op?`<div class="drop" style="--pig:${e.pig}">${e.vocab.map(w=>{
+      const picked=selected.some(s=>s.w===w&&s.k===e.key);
+      return `<button class="dw ${picked?'picked':''}" data-w="${w}" data-k="${e.key}">${w}</button>`;}).join('')}</div>`:'';
+    return `<div class="keycell"><button class="key ${op?'open':''} ${has?'has':''}" style="--pig:${e.pig}" data-key="${e.key}">${e.key}</button>${drop}</div>`;
+  }).join('') + `<button class="key clearkey" id="clearKey" aria-label="クリア">クリア</button>`;
+  document.querySelectorAll('.key[data-key]').forEach(b=>b.addEventListener('click',ev=>{ev.stopPropagation();openKey=openKey===b.dataset.key?null:b.dataset.key;renderBlend();}));
+  document.getElementById('clearKey').addEventListener('click',ev=>{ev.stopPropagation();selected=[];openKey=null;renderBlend();});
+  document.querySelectorAll('.dw').forEach(b=>b.addEventListener('click',ev=>{ev.stopPropagation();pickWord(b.dataset.w,b.dataset.k);}));
+
+  const sel=document.getElementById('sel');
+  if(!selected.length){sel.innerHTML=`<div class="empty">まだ選ばれていません。</div>`;}
+  else{sel.innerHTML=selected.map((s,i)=>`<span class="sel-item" style="--pig:${byKey[s.k].pig}"><span class="dot"></span>${s.w}<button class="rm" data-i="${i}" aria-label="外す">×</button></span>`).join('');
+    sel.querySelectorAll('.rm').forEach(b=>b.addEventListener('click',ev=>{ev.stopPropagation();removeAt(+b.dataset.i);}));}
+
+  const blend=computeBlend(selected);
+  document.getElementById('blendRadar').innerHTML=radarBlend(selected,blend);
+  document.getElementById('comment').innerHTML=`<span class="hd">この声は</span><span class="txt">${blend?commentText(selected,blend):'感情をひとつ以上選んでください。'}</span>`;
+}
+
+document.addEventListener('click',()=>{if(openKey!==null){openKey=null;renderBlend();}});
+document.querySelectorAll('.pbtn').forEach(b=>b.addEventListener('click',ev=>{ev.stopPropagation();
+  selected=b.dataset.preset==='clear'?[]:PRESETS[b.dataset.preset].map(([w,k])=>({w,k}));openKey=null;renderBlend();}));
+
+/* ===== nav ===== */
+const navA=document.getElementById('nav-atlas'),navB=document.getElementById('nav-blend');
+function show(view){
+  const atlas=view==='atlas';
+  document.getElementById('view-atlas').hidden=!atlas;
+  document.getElementById('view-blend').hidden=atlas;
+  navA.classList.toggle('active',atlas);navB.classList.toggle('active',!atlas);
+  window.scrollTo({top:0,behavior:'instant'});
+}
+navA.addEventListener('click',()=>show('atlas'));
+navB.addEventListener('click',()=>show('blend'));
+
+/* init */
+renderAtlas();
+selected=[];
+renderBlend();
+</script>
+</body>
+</html>
